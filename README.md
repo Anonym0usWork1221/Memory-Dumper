@@ -5,7 +5,8 @@ Android-Py-Cheats-Script
 [![GitHub issues](https://img.shields.io/github/issues/Anonym0usWork1221/Memory-Dumper.svg)](https://github.com/Anonym0usWork1221/Memory-Dumper/issues)
 [![GitHub watchers](https://img.shields.io/github/watchers/Anonym0usWork1221/Memory-Dumper.svg)](https://github.com/Anonym0usWork1221/Memory-Dumper/watchers)
 [![Python](https://img.shields.io/badge/language-Python%203-blue.svg)](https://www.python.org)
-[![Python](https://img.shields.io/badge/language-CPP-Red.svg)](https://www.cpp.org)
+[![CPP](https://img.shields.io/badge/language-CPP-pink.svg)](https://www.cpp.org)
+[![C](https://img.shields.io/badge/language-C-red.svg)](https://www.c.org)
 [![GPT_LICENSE](https://img.shields.io/badge/license-MIT-yellow.svg)](https://opensource.org/licenses/)
 
 -----------
