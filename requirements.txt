@@ -1,0 +1,5 @@
+androidMemoryTool==0.3
+art==5.7
+commonmark==0.9.1
+Pygments==2.13.0
+rich==12.6.0
