@@ -68,7 +68,7 @@ Usage
 Reference
 ----------
 * [Android-MemoryTool](https://github.com/Anonym0usWork1221/android-memorytool)
-* [Android-MemoryTool](https://github.com/maiyao1988/elf-dump-fix)
+* [Elf-Dump-Fixer](https://github.com/maiyao1988/elf-dump-fix)
 
 
 # Contributor 
