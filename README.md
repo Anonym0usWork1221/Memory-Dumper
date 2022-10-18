@@ -60,8 +60,11 @@ Usage
 ----------------------------------------
 * **__Run Game/Process__**
 
-* **__Run Script__**  
+* **__Run Script on Linux__**  
     ``python3 MemoryDumper.py``  
+    
+* **__Run Script on Android__**  
+    ``sudo python3 MemoryDumper.py``
 
 * **__Make your choice from given menu__**  
 
