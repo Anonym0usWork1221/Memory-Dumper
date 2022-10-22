@@ -68,6 +68,8 @@ Usage
 
 * **__Make your choice from given menu__**  
 
+# Video Demonstration
+[![usage](https://img.youtube.com/vi/dZ-kTPgxiA8/0.jpg)](https://www.youtube.com/watch?v=dZ-kTPgxiA8)
 
 Reference
 ----------
