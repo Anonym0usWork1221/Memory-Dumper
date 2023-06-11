@@ -3,18 +3,32 @@ from glob import glob
 from sys import platform
 from ctypes import CDLL, c_char_p
 from os import environ, system, getuid, path, mkdir, chmod, remove
+from time import sleep
 from sys import exit
 from shutil import copy
 from subprocess import check_output
+
 try:
     from androidMemoryTool import AndroidMemoryTool
-    from rich import print
+    import rich
     from art import tprint
 except ImportError:
-    system("pip3 install -r ./requirements.txt")
+    system("pip3 install -r ./requirements.txt --upgrade")
     exit()
 
-clear = lambda: system("clear")
+
+def clear():
+    system("clear")
+
+
+class COLORS:
+    HEADER = '\033[95m'
+    BLUE = '\033[94m'
+    CYAN = '\033[96m'
+    GREEN = '\033[92m'
+    WARNING = '\033[93m'
+    RED = '\033[91m'
+    RESET = '\033[0m'
 
 
 class MemoryDumper:
@@ -30,15 +44,13 @@ class MemoryDumper:
     def __int__(self, **kwargs):
         super().__init__(**kwargs)
         # initialization directory and decoration
-        if path.exists(self._dump_path):
-            pass
-        else:
+        if not path.exists(self._dump_path):
             mkdir(self._dump_path)
 
         if path.exists('./build/'):
             self._initial_glob = glob('./build/*/fixer_lib*.pyd')[0]
         else:
-            print("[*] Run setup file")
+            rich.print("[*] Run setup file by command 'python3 setup.py build'")
             exit(0)
 
         self._set_lib()
@@ -72,34 +84,36 @@ class MemoryDumper:
         plt = self._get_platform()
         if plt == 'android':
             if self._initial_glob == '':
-                print("[*] Setup is not build")
+                rich.print("[*] Setup is not build")
                 exit(0)
             else:
                 self._is_rooted_acquired()
                 self._path_validator()
                 if self._android_glob == '':
-                    print("[*] Root required to initialize glob")
+                    rich.print("[*] Root required to initialize glob")
                     exit(0)
                 self._lib = CDLL(self._android_glob)
 
         elif plt == 'linux':
             self._lib = CDLL(self._initial_glob)
         else:
-            print('[*] Platform not supported')
+            rich.print('[*] Platform not supported')
             exit(0)
 
     @staticmethod
     def _is_rooted_acquired() -> None:
         if getuid() != 0:
-            print("[*] Root Required")
-            print("[*] Reboot script as root")
+            rich.print("[*] Root Required")
+            rich.print("[*] Reboot script as root")
             exit(0)
         else:
-            print("Root Acquired")
+            rich.print("Root Acquired")
 
     @staticmethod
     def _decoration() -> None:
+        print(COLORS.RED)
         tprint(text="DUMPER", chr_ignore=True)
+        print(COLORS.RESET)
 
     def _fixer_so(self, inFile: bytes, outFile: bytes, baseAddr: bytes) -> None:
         self._lib.fixer_so(c_char_p(inFile), c_char_p(outFile),
@@ -115,10 +129,12 @@ class MemoryDumper:
     def main_loop(self) -> None:
         clear()
         self._decoration()
+        print(COLORS.BLUE)
         print("[*] 1. Dump from Memory")
         print("[*] 2. Fix Dump File")
         print("[*] 3. Exit")
         ans = input(">>>> ")
+        print(COLORS.RESET)
         ans = int(ans)
         if ans == 1:
             self._pkg = input("Enter package name: ")
@@ -126,39 +142,48 @@ class MemoryDumper:
             if game:
                 self._android_tool = AndroidMemoryTool(PKG=self._pkg)
             else:
-                print("[*] PID not found")
+                rich.print("[*] PID not found")
                 exit(0)
 
             clear()
             self._decoration()
             while True:
+                print(COLORS.CYAN)
                 print("[*] 1. Raw Dump from memory")
                 print("[*] 2. Fixed Dump from memory")
                 print("[*] 3. Exit and release memory")
                 ans = input(">>>> ")
+                print(COLORS.RESET)
+
                 ans = int(ans)
                 if ans == 1:
                     lib_id = input("Enter Lib Name: ")
                     dump = self._android_tool.raw_dump(lib_name=lib_id, path=self._dump_path)
                     if dump:
-                        print("\n[*] Lib Dumped successfully: %s" % self._dump_path)
+                        rich.print("\n[*] Lib Dumped successfully: %s" % self._dump_path)
                 elif ans == 2:
                     lib_id = input("Enter Lib Name: ")
                     dump = self._android_tool.raw_dump(lib_name=lib_id, path=self._dump_path)
                     if dump:
-                        file_path = glob(f"{self._dump_path}*{lib_id}*")[0]
-                        unrefined_file_name = path.basename(file_path)
-                        file_name = unrefined_file_name.replace('.bin', '')
-                        base_addr = file_name.split('-')[0]
+                        file_path = glob(f"{self._dump_path}*{lib_id.replace('.so', '').replace('.bin', '')}*")
+                        if file_path:
+                            unrefined_file_name = path.basename(file_path[0])
+                            file_name = unrefined_file_name.replace('.bin', '')
+                            base_addr = file_name.split('-')[0]
 
-                        self._fixer_so(file_path.encode("ASCII"), f"{self._dump_path}{file_name}".encode("ASCII"),
-                                       base_addr.encode("ASCII"))
-                        remove(path=file_path)
+                            self._fixer_so(
+                                file_path[0].encode("ASCII"),
+                                f"{self._dump_path if self._dump_path.endswith('/') else self._dump_path + '/'}"
+                                f"{file_name}".encode("ASCII"),
+                                base_addr.encode("ASCII"))
+                            remove(path=file_path[0])
+                        else:
+                            rich.print("[*] Unable to fix dumped file try using option 2 for fixing the dumped lib")
                     else:
-                        print("[*] Unable to get dump file")
+                        rich.print("[*] Unable to get dump file")
 
                 elif ans == 3:
-                    print("[*] Exiting")
+                    rich.print("[*] Exiting")
                     exit(0)
 
         elif ans == 2:
@@ -170,7 +195,7 @@ class MemoryDumper:
         elif ans == 3:
             exit(0)
         else:
-            print("[*] Choose given options")
+            rich.print("[*] Choose given options")
 
 
 if __name__ == '__main__':
