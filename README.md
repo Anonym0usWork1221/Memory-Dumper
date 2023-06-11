@@ -80,6 +80,10 @@ Usage
 
 * **__Make your choice from given menu__**  
 
+# Compare between no-fix and fixed ELF
+![image_without_fixer](img/no-fix.png)
+![image_with_fixer](img/fix.png)
+
 Reference
 ----------
 * [Android-MemoryTool](https://github.com/Anonym0usWork1221/android-memorytool)
