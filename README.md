@@ -59,10 +59,10 @@ Installation on Linux
 ----------------------------------------
 * **__Installation__**  
   ```
-  pkg install cmake
+  apt install cmake
   git clone https://github.com/Anonym0usWork1221/Memory-Dumper
   cd Memory-Dumper/    
-  pip3 install
+  pip3 install .
   ```
 
 * **__Dumped lib will be appeared in same directory__** ``./dumped_lib/*``  
