@@ -51,7 +51,7 @@ static void _fix_relative_rebase(char *buffer, size_t bufSize, uint64_t imageBas
             unsigned *offIntBuf = (unsigned*)(buffer+off);
             if (border < (const char*)offIntBuf) {
             	uint64_t tmp = off;
-                printf("relocation off %llx invalid, out of border...\n", tmp);
+                printf("relocation off %lx invalid, out of border...\n", tmp);
 				continue;
             }
             unsigned addrNow = *offIntBuf;
@@ -63,7 +63,7 @@ static void _fix_relative_rebase(char *buffer, size_t bufSize, uint64_t imageBas
 
 template <typename Elf_Phdr_Type, typename Elf_Addr_Type>
 uint32_t _get_mem_flag(Elf_Phdr_Type *phdr, size_t phNum, size_t memAddr) {
-	for (int i = 0; i < phNum; i++) {
+	for (int i = 0; i < static_cast<int>(phNum); i++) {
 		Elf_Addr_Type begin = phdr[i].p_vaddr;
 		Elf_Addr_Type end = begin + phdr[i].p_memsz;
 		if (memAddr > begin && memAddr < end) {
@@ -77,16 +77,16 @@ template <typename Elf_Rel_Type, bool isElf32>
 static void _fix_rel_bias(Elf_Rel_Type *relDyn, size_t relCount, size_t bias) {
 	const int R_AARCH64_JUMP_SLOT = 1026;
 	const int R_AARCH64_RELATIVE = 1027;
-	for (int i = 0; i < relCount; i++) {
+	for (int i = 0; i < static_cast<int>(relCount); i++) {
 		unsigned type = 0;
-		unsigned sym = 0;
+//		unsigned sym = 0;
 		if (isElf32) {
 			type = ELF32_R_TYPE(relDyn[i].r_info);
-			sym = ELF32_R_SYM(relDyn[i].r_info);
+//			sym = ELF32_R_SYM(relDyn[i].r_info);
 		}
 		else {
 			type = ELF64_R_TYPE(relDyn[i].r_info);
-			sym = ELF64_R_SYM(relDyn[i].r_info);
+//			sym = ELF64_R_SYM(relDyn[i].r_info);
 		}
 		//这两种重定位地址都是相对于loadAddr的，所以要修正
 		if (type == R_ARM_JUMP_SLOT || type == R_ARM_RELATIVE || type == R_AARCH64_JUMP_SLOT || type == R_AARCH64_RELATIVE) {
@@ -99,7 +99,7 @@ static void _fix_rel_bias(Elf_Rel_Type *relDyn, size_t relCount, size_t bias) {
 
 template <typename Elf_Sym_Type>
 static void _fix_dynsym_bias(Elf_Sym_Type *dysym, size_t count, size_t bias) {
-	for (int i = 0; i < count; ++i) {
+	for (int i = 0; i < static_cast<int>(count); ++i) {
 		if (dysym[i].st_value > 0) {
 			dysym[i].st_value -= bias;
 		}
@@ -140,7 +140,7 @@ static void _regen_section_header(const Elf_Ehdr_Type *pehdr, const char *buffer
 	}
 	if (maxLoad > len) {
 		//加载的范围大于整个dump下来的so，有问题，先警告
-		printf("warning load size [%u] is bigger than so size [%u], dump maybe incomplete!!!\n", maxLoad, len);
+		printf("warning load size [%u] is bigger than so size [%lu], dump maybe incomplete!!!\n", maxLoad, len);
 		//TODO:should we fix it???
 	}
 
@@ -352,7 +352,7 @@ static void _regen_section_header(const Elf_Ehdr_Type *pehdr, const char *buffer
 			case DT_INIT: {
 				//找到init段代码，但是无法知道有多长，只好做一个警告，提醒使用者init段存在，脱壳代码可能存在这里
 				uint64_t tmp = dyn[i].d_un.d_ptr;
-				printf("warning .init exist at 0x%016llx\n", tmp);
+				printf("warning .init exist at 0x%016lx\n", tmp);
 				break;
 			}
 			case DT_TEXTREL:
@@ -415,7 +415,7 @@ static void _regen_section_header(const Elf_Ehdr_Type *pehdr, const char *buffer
 			//符号在符号表里面的偏移，不用考虑文件与内存加载之间bias
 			size_t off = sym->st_name;
 			const char *symName = strbase + off;
-			size_t symOff = sym->st_value;
+//			size_t symOff = sym->st_value;
 			//printf("symName=%p strbase=%p strend=%p\n", symName, strbase, strend);
 			if ((size_t) symName < (size_t) strbase || (size_t) symName > (size_t) strend) {
 				//动态表的符号偏移不在动态字符串表之内，说明非法，已经没有合法的动态符号了。
