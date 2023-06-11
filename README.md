@@ -8,7 +8,7 @@ Elf-Fix-Memory-Dumper
 [![CPP](https://img.shields.io/badge/language-CPP-pink.svg)](https://www.cpp.org)
 [![C](https://img.shields.io/badge/language-C-red.svg)](https://www.c.org)
 [![GPT_LICENSE](https://img.shields.io/badge/license-MIT-yellow.svg)](https://opensource.org/licenses/)
-![code size](https://img.shields.io/github/languages/code-size/Anonym0usWork1221/android-memorytool)
+![code size](https://img.shields.io/github/languages/code-size/Anonym0usWork1221/Memory-Dumper)
 
 -----------
 
