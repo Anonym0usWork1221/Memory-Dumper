@@ -67,6 +67,12 @@ Installation on Linux
 
 * **__Dumped lib will be appeared in same directory__** ``./dumped_lib/*``  
 
+Alternative autoinstallation for both (Android/Linux)
+----------------------------------------
+* First clone the repository ``git clone https://github.com/Anonym0usWork1221/Memory-Dumper``
+* Open the Clone Directory ``cd Memory-Dumper/``
+* Execute the shell auto install ``./autosetup.sh``
+* And you are ready to go
 
 Usage 
 ----------------------------------------
